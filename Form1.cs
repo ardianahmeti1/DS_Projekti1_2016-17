@@ -177,7 +177,7 @@ namespace DS_Projekti1_EnkriptimIFjalekalimit
 
          public static string Enkripto(string fjalekalimi, string salti)
         {
-            StringBuilder strFjalekalimi = new StringBuilder(fjalekalimi+salti);
+            StringBuilder strFjalekalimi = new StringBuilder(salti+fjalekalimi);
             
             StringBuilder enkriptimi = new StringBuilder();
             String fjalekalimiRi = "";
