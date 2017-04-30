@@ -175,21 +175,22 @@ namespace DS_Projekti1_EnkriptimIFjalekalimit
 
         }
 
-        public static string Enkripto(string fjalekalimi, string salti)
+         public static string Enkripto(string fjalekalimi, string salti)
         {
-            StringBuilder strFjalekalimi = new StringBuilder(fjalekalimi);
-            StringBuilder strSalti = new StringBuilder(salti);
-            StringBuilder enkriptimi = new StringBuilder();
-
+            StringBuilder strFjalekalimi = new StringBuilder(fjalekalimi+salti);
             
-            for (int i = 1; i <= strFjalekalimi.Length; i++)
+            StringBuilder enkriptimi = new StringBuilder();
+            String fjalekalimiRi = "";
+            int key = 354;
+            for (int i = 0; i < strFjalekalimi.Length; i++)
             {
-                enkriptimi.Append(strSalti[i%8]);
-                enkriptimi.Append(strFjalekalimi[i%strFjalekalimi.Length]);
-            }
-            return enkriptimi.ToString();
-        }
+                int charValue = Convert.ToInt32(strFjalekalimi[i]); //merr vlerat ASCII  te karaktereve
+                charValue ^= key; //xor 
 
+                fjalekalimiRi += char.ConvertFromUtf32(charValue); 
+            }
+            return fjalekalimiRi.ToString();
+        }
 
         }
 }
