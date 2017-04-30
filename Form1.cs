@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -65,15 +65,15 @@ namespace DS_Projekti1_EnkriptimIFjalekalimit
                         
                             try
                             {
-                                string connectionString = "Server=127.0.0.1; Database=ds_projekti1; UserID=root; Password=805198;";
+                                string connectionString = "Server=127.0.0.1; Database=ds_projekti1; UserID=root; Password=7777;";
 
                                 MySqlConnection myDbConn = new MySqlConnection(connectionString);
 
                                 myDbConn.Open();
 
-                            /* Ketu ruhet fjalekalimi i enkriptuar 
-                             * mirepo meqenese ende nuk e kemi implementuar algoritmin vetem per test ja kam vene vleren 'test123'
-                            */
+                            // Ketu ruhet fjalekalimi i enkriptuar 
+                             
+                            
                             string salti = Salti();
                                 string fjalekalimiEnkriptuar = Enkripto(txtRuajtjaFjalekalimi.Text, salti);
 
@@ -110,7 +110,7 @@ namespace DS_Projekti1_EnkriptimIFjalekalimit
                 }
                 else
                 {
-                    lblRuaj.Text = "Perdoruesi duhet te kete 6 karaktere apo me shume!";
+                    lblRuaj.Text = "Perdoruesi duhet te kete 8 karaktere apo me shume!";
                 }
             }
             else
@@ -120,25 +120,43 @@ namespace DS_Projekti1_EnkriptimIFjalekalimit
         }
 
 
+
+        
+        
+
+        public static string Enkripto(string fjalekalimi, string salti)
+        {
+            StringBuilder strFjalekalimi = new StringBuilder(salti + fjalekalimi);
+
+            StringBuilder enkriptimi = new StringBuilder();
+            String fjalekalimiRi = "";
+            int key = 354;
+            for (int i = 0; i < strFjalekalimi.Length; i++)
+            {
+                int charValue = Convert.ToInt32(strFjalekalimi[i]); //merr vlerat ASCII  te karaktereve
+                charValue ^= key; //xor 
+
+                fjalekalimiRi += char.ConvertFromUtf32(charValue);
+            }
+            return fjalekalimiRi.ToString();
+        }
         private void login()
         {
-            if (txtTestPerdoruesi.Text != null && txtTestFjalekalimi.Text != null)
+            if (txtTestPerdoruesi.TextLength != 0 && txtTestFjalekalimi.TextLength != 0)
             {
                 try
                 {
 
-                    string connectionString = "Server=127.0.0.1; Database=ds_projekti1; UserID=root; Password=805198;";
+                    string connectionString = "Server=127.0.0.1; Database=ds_projekti1; UserID=root; Password=7777;";
 
                     MySqlConnection myDbConn = new MySqlConnection(connectionString);
 
                     myDbConn.Open();
 
-                    /* Ketu ruhet fjalekalimi i enkriptuar 
-                     * mirepo meqenese ende nuk e kemi implementuar algoritmin vetem per test ja kam vene vleren 'test123'
-                    */
-                    string fjalekalimiEnkriptuar = "test123";
 
-                    string users = "Select * from perdoruesit where username='" + txtTestPerdoruesi.Text + "' and fjalekalimi='" + fjalekalimiEnkriptuar + "'";
+
+
+                    string users = "Select * from perdoruesit where username='" + txtTestPerdoruesi.Text + "'";
 
                     MySqlCommand command = new MySqlCommand(users, myDbConn);
 
@@ -155,11 +173,21 @@ namespace DS_Projekti1_EnkriptimIFjalekalimit
 
                     if (i == 0)
                     {
-                        lblKyqja.Text = "Ju keni dhene Perdoruesi-n apo Fjalekalimi-n jovalid!";
+                        lblKyqja.Text = "Ju keni dhene Perdoruesi-n jovalid!";
                     }
                     else
                     {
-                        lblKyqja.Text = "Ju jeni kyqur me sukses!";
+                        string saltiDB = rezultatet.Rows[0]["salt"].ToString();
+                        string fjalekalimiDB = rezultatet.Rows[0]["fjalekalimi"].ToString();
+                        if (Enkripto(txtTestFjalekalimi.Text,saltiDB) == fjalekalimiDB)
+                        {
+                            lblKyqja.Text = "Jeni kyqur me sukses!";
+                        }
+                        else
+                        {
+                            lblKyqja.Text = "Fjalekalimi eshte jovalid!";
+                        }
+
                     }
                     myDbConn.Close();
                 }
@@ -174,23 +202,6 @@ namespace DS_Projekti1_EnkriptimIFjalekalimit
             }
 
         }
+    }
 
-         public static string Enkripto(string fjalekalimi, string salti)
-        {
-            StringBuilder strFjalekalimi = new StringBuilder(salti+fjalekalimi);
-            
-            StringBuilder enkriptimi = new StringBuilder();
-            String fjalekalimiRi = "";
-            int key = 354;
-            for (int i = 0; i < strFjalekalimi.Length; i++)
-            {
-                int charValue = Convert.ToInt32(strFjalekalimi[i]); //merr vlerat ASCII  te karaktereve
-                charValue ^= key; //xor 
-
-                fjalekalimiRi += char.ConvertFromUtf32(charValue); 
-            }
-            return fjalekalimiRi.ToString();
-        }
-
-        }
 }
